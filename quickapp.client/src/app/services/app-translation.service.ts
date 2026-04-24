@@ -6,8 +6,8 @@
 
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { TranslateService, TranslateLoader, TranslationObject } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { TranslateService, TranslateLoader } from '@ngx-translate/core';
+import { of } from 'rxjs';
 
 import fallbackLangData from '../../../public/locale/en.json';
 
@@ -17,7 +17,7 @@ import fallbackLangData from '../../../public/locale/en.json';
 export class AppTranslationService {
   private translate = inject(TranslateService);
 
-  languageChanged$ = this.translate.onLangChange;
+  languageChanged$ = this.translate.onLangChange.asObservable();
 
   constructor() {
     this.addLanguages(['en', 'fr', 'de', 'es', 'pt', 'zh', 'ko', 'ar']);
@@ -29,11 +29,11 @@ export class AppTranslationService {
   }
 
   setDefaultLanguage(lang: string) {
-    this.translate.setFallbackLang(lang);
+    this.translate.setDefaultLang(lang);
   }
 
   getDefaultLanguage() {
-    return this.translate.getFallbackLang();
+    return this.translate.defaultLang;
   }
 
   getBrowserLanguage() {
@@ -41,11 +41,11 @@ export class AppTranslationService {
   }
 
   getCurrentLanguage() {
-    return this.translate.getCurrentLang();
+    return this.translate.currentLang;
   }
 
   getLoadedLanguages() {
-    return this.translate.getLangs();
+    return this.translate.langs;
   }
 
   useBrowserLanguage(): string | void {
@@ -66,7 +66,7 @@ export class AppTranslationService {
       language = this.getDefaultLanguage();
     }
 
-    setTimeout(() => { this.translate.use(language!); });
+    setTimeout(() => { this.translate.use(language); });
 
     return language;
   }
@@ -84,10 +84,10 @@ export class AppTranslationService {
 export class TranslateLanguageLoader implements TranslateLoader {
   http = inject(HttpClient);
 
-  public getTranslation(lang: string): Observable<TranslationObject> {
+  public getTranslation(lang: string) {
     if (lang === 'en')
       return of(fallbackLangData);
 
-    return this.http.get<TranslationObject>(`/locale/${lang}.json`);
+    return this.http.get(`/locale/${lang}.json`);
   }
 }
