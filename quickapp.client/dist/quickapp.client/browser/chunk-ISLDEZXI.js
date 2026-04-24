@@ -1,0 +1,1 @@
+import{c as n,d as a,f as t,g as e}from"./chunk-W7YCOLRM.js";var r=n("fadeInOut",[e(":enter",[t({opacity:0}),a("0.4s ease-in",t({opacity:1}))]),e(":leave",[a("0.4s 10ms ease-out",t({opacity:0}))])]);export{r as a};
